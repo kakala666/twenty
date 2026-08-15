@@ -65,11 +65,29 @@ These live in `/opt/twenty/deploy/.env` on the server, not in this repo, but the
 
 ## Known upstream breakage worked around
 
-- `twenty-sdk`'s `build:sdk` script passes single-quoted globs to `rimraf`
-  (`npx rimraf 'dist/sdk' 'dist/define/**/*.d.ts' …`). On Windows the shell does not strip the
-  quotes, so rimraf receives a path containing `'` and fails with `EINVAL: Illegal characters in
-  path`. Consequence: **the frontend cannot be built on Windows.** Build container images on Linux.
-  Not patched here, because patching it would touch an upstream file for a local-only annoyance.
+Both of these are Windows-only bugs in upstream tooling. Neither exists on Linux, so neither is
+patched in tracked source.
+
+1. **`twenty-sdk`'s `build:sdk` script passes single-quoted globs to `rimraf`**
+   (`npx rimraf 'dist/sdk' 'dist/define/**/*.d.ts' …`). On Windows the shell does not strip the
+   quotes, so rimraf receives a path containing `'` and fails with `EINVAL: Illegal characters in
+   path`. Consequence: **the frontend cannot be built on Windows, and `nx typecheck twenty-server`
+   cannot run** (it depends on this build). Build container images on Linux; typecheck with
+   `npx tsc --noEmit -p tsconfig.json` inside `packages/twenty-server`.
+
+2. **The app CLI writes Windows path separators into the app manifest.**
+   `manifest-build.ts` sets `sourceHandlerPath` / `builtHandlerPath` from `path.relative()`, so on
+   Windows a logic function is recorded as `src\logic-functions\x.function.mjs` while the published
+   tarball stores it as `src/logic-functions/x.function.mjs`. Install then fails with
+   `File not found in package: src\logic-functions\…`. Any app with a logic function is unpublishable
+   from Windows.
+
+   Worked around by patching the **built** CLI, which is gitignored, so no tracked file changed:
+   `packages/twenty-sdk/dist/login-DhZHBTSY.js` (the CJS chunk `dist/cli.cjs` loads) — both handler
+   paths get `.replace(/\\/g, "/")`. The ESM twin `dist/login-BZKt-N5E.mjs` is patched identically.
+
+   **This patch is lost whenever `twenty-sdk` is rebuilt.** If `app:install` starts failing with a
+   backslashed path again, reapply it — or publish from Linux, where the bug does not occur.
 
 ## Regenerable, never hand-merge
 
