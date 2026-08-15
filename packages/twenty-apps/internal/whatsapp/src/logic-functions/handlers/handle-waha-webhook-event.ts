@@ -97,6 +97,24 @@ const handleMessageEvent = async (
   ]);
 
   if (isDefined(alreadyStored)) {
+    // A message we sent ourselves is stored before WhatsApp echoes it back, so
+    // the echo is the first delivery signal it ever gets. Skipping the whole
+    // event here would freeze it at the status the send call guessed.
+    const nextStatus = advanceWhatsappAckStatus(
+      alreadyStored.ackStatus,
+      message.ackStatus,
+    );
+
+    if (isDefined(nextStatus) && nextStatus !== alreadyStored.ackStatus) {
+      await updateWhatsappMessageAckStatus(alreadyStored.id, nextStatus);
+
+      return {
+        handled: true,
+        event: eventName,
+        detail: `Message ${message.externalId} already stored; advanced to ${nextStatus}.`,
+      };
+    }
+
     return {
       handled: true,
       event: eventName,
