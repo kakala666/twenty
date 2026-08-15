@@ -1,6 +1,13 @@
 import axios from 'axios';
 
-import { WahaApiClientService } from 'src/modules/whatsapp/message-import-manager/drivers/waha/waha-api-client.service';
+import {
+  WAHA_REQUEST_TIMEOUT_IN_MS,
+  WahaApiClientService,
+} from 'src/modules/whatsapp/message-import-manager/drivers/waha/waha-api-client.service';
+import {
+  WhatsappDriverException,
+  WhatsappDriverExceptionCode,
+} from 'src/modules/whatsapp/message-import-manager/drivers/waha/whatsapp-driver.exception';
 
 jest.mock('axios');
 
@@ -18,6 +25,17 @@ describe('WahaApiClientService', () => {
     service = new WahaApiClientService({
       baseUrl: WAHA_BASE_URL,
       apiKey: WAHA_API_KEY,
+    });
+  });
+
+  describe('configuration', () => {
+    it('should build the http client on the configured base url with a request timeout when constructed', () => {
+      expect(axios.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          baseURL: WAHA_BASE_URL,
+          timeout: WAHA_REQUEST_TIMEOUT_IN_MS,
+        }),
+      );
     });
   });
 
@@ -44,7 +62,11 @@ describe('WahaApiClientService', () => {
     it('should interpolate the session name into the path when fetching chats', async () => {
       request.mockResolvedValue({ status: 200, data: [] });
 
-      await service.getChats({ sessionName: 'default', limit: 50, offset: 100 });
+      await service.getChats({
+        sessionName: 'default',
+        limit: 50,
+        offset: 100,
+      });
 
       expect(request).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -59,7 +81,11 @@ describe('WahaApiClientService', () => {
     // and no cursor, so there is nothing for the client to unwrap.
     it('should return the bare array as-is when the endpoint responds without an envelope', async () => {
       const chats = [
-        { id: '8619880607709@c.us', name: 'Ada', conversationTimestamp: 1786829197 },
+        {
+          id: '8619880607709@c.us',
+          name: 'Ada',
+          conversationTimestamp: 1786829197,
+        },
       ];
 
       request.mockResolvedValue({ status: 200, data: chats });
@@ -225,6 +251,77 @@ describe('WahaApiClientService', () => {
         }),
       );
       expect(result).toEqual(mapping);
+    });
+  });
+
+  describe('error handling', () => {
+    it('should raise a WhatsappDriverException carrying the status code when the response is not 2xx', async () => {
+      request.mockResolvedValue({
+        status: 500,
+        data: { message: 'boom' },
+      });
+
+      const error = await service.listSessions().catch((thrown) => thrown);
+
+      expect(error).toBeInstanceOf(WhatsappDriverException);
+      expect(error.code).toBe(WhatsappDriverExceptionCode.PROVIDER_ERROR);
+      expect(error.statusCode).toBe(500);
+    });
+
+    it('should raise an UNAUTHORIZED exception when the api key is rejected', async () => {
+      request.mockResolvedValue({ status: 401, data: {} });
+
+      const error = await service.listSessions().catch((thrown) => thrown);
+
+      expect(error).toBeInstanceOf(WhatsappDriverException);
+      expect(error.code).toBe(WhatsappDriverExceptionCode.UNAUTHORIZED);
+      expect(error.statusCode).toBe(401);
+    });
+
+    it('should raise a NOT_FOUND exception when the session does not exist', async () => {
+      request.mockResolvedValue({ status: 404, data: {} });
+
+      const error = await service
+        .getChats({ sessionName: 'missing' })
+        .catch((thrown) => thrown);
+
+      expect(error).toBeInstanceOf(WhatsappDriverException);
+      expect(error.code).toBe(WhatsappDriverExceptionCode.NOT_FOUND);
+      expect(error.statusCode).toBe(404);
+    });
+
+    it('should raise a NETWORK_ERROR exception with no status code when the connection is refused', async () => {
+      const connectionRefused = Object.assign(
+        new Error('connect ECONNREFUSED 127.0.0.1:3000'),
+        { isAxiosError: true, code: 'ECONNREFUSED' },
+      );
+
+      request.mockRejectedValue(connectionRefused);
+
+      const error = await service.listSessions().catch((thrown) => thrown);
+
+      expect(error).toBeInstanceOf(WhatsappDriverException);
+      expect(error.code).toBe(WhatsappDriverExceptionCode.NETWORK_ERROR);
+      expect(error.statusCode).toBeUndefined();
+      expect(error.cause).toBe(connectionRefused);
+    });
+
+    // Driven by axios' own timeout setting, so no timers are involved here and
+    // jest's global fake timers stay out of the way.
+    it('should raise a NETWORK_ERROR exception when the request times out', async () => {
+      request.mockRejectedValue(
+        Object.assign(new Error('timeout of 30000ms exceeded'), {
+          isAxiosError: true,
+          code: 'ECONNABORTED',
+        }),
+      );
+
+      const error = await service
+        .getChats({ sessionName: 'default' })
+        .catch((thrown) => thrown);
+
+      expect(error).toBeInstanceOf(WhatsappDriverException);
+      expect(error.code).toBe(WhatsappDriverExceptionCode.NETWORK_ERROR);
     });
   });
 });
