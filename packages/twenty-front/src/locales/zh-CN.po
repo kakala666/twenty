@@ -21842,7 +21842,7 @@ msgstr "Zed"
 #: src/modules/whatsapp/components/NavigationDrawerWhatsappSection.tsx
 #: src/modules/whatsapp/components/WhatsappConversationListPanel.tsx
 msgid "WhatsApp"
-msgstr "微信 WhatsApp"
+msgstr "WhatsApp"
 
 #. js-lingui-id: Ww6Qgf
 #: src/modules/whatsapp/components/WhatsappAppNotInstalledEmptyState.tsx
