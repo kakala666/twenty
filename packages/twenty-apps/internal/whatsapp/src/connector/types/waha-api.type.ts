@@ -48,6 +48,18 @@ export type WahaLidMapping = {
   pn: string;
 };
 
+// History is sliced by time, never by offset alone: the messages endpoint offers
+// `limit`/`offset` over a live chat, where arriving messages shift the offset.
+// `filter.timestamp.gte`/`.lte` are inclusive and expressed in unix SECONDS.
+export type WahaChatMessagesParams = {
+  sessionName: string;
+  chatId: string;
+  limit: number;
+  offset: number;
+  gteInSeconds: number;
+  lteInSeconds: number;
+};
+
 export type WahaSendTextParams = {
   sessionName: string;
   chatId: string;

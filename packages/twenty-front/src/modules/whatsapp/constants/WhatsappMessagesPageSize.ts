@@ -1,0 +1,1 @@
+export const WHATSAPP_MESSAGES_PAGE_SIZE = 50;

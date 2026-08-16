@@ -66,6 +66,8 @@ export type WhatsappChatRecord = {
   chatId: string | null;
   phoneJid: string | null;
   lid: string | null;
+  // Backfill watermark: everything from this instant onwards is imported.
+  syncedFromAt: string | null;
   accountId: string | null;
   accountSessionName: string | null;
 };
@@ -87,6 +89,7 @@ const CHAT_NODE_SELECTION = {
   chatId: true,
   phoneJid: true,
   lid: true,
+  syncedFromAt: true,
   accountId: true,
   account: { sessionName: true },
 } as const;
@@ -113,6 +116,7 @@ const toChatRecord = (node: Record<string, unknown>): WhatsappChatRecord => {
     chatId: readString(node, 'chatId'),
     phoneJid: readString(node, 'phoneJid'),
     lid: readString(node, 'lid'),
+    syncedFromAt: readString(node, 'syncedFromAt'),
     accountId: readString(node, 'accountId'),
     accountSessionName: isDefined(account)
       ? readString(account, 'sessionName')
@@ -144,6 +148,7 @@ export type WhatsappChatInput = {
   lid?: string | null;
   isGroup?: boolean;
   lastMessageAt?: string | null;
+  syncedFromAt?: string | null;
   accountId?: string | null;
 };
 
@@ -251,6 +256,50 @@ export const findWhatsappChatByAddresses = async (
   const node = readEdges(result, 'whatsappChats')[0];
 
   return isDefined(node) ? toChatRecord(node) : null;
+};
+
+export const findWhatsappChatById = async (
+  id: string,
+): Promise<WhatsappChatRecord | null> => {
+  const result = await getCoreApiClient().query({
+    whatsappChats: {
+      __args: { filter: { id: { eq: id } }, first: 1 },
+      edges: { node: CHAT_NODE_SELECTION },
+    },
+  });
+
+  const node = readEdges(result, 'whatsappChats')[0];
+
+  return isDefined(node) ? toChatRecord(node) : null;
+};
+
+// A chat still needs history when it was never backfilled at all, or when its
+// watermark has not yet walked back past the horizon the caller asked for.
+// Chats already imported that far drop out of the filter, so successive runs
+// keep finding new work instead of re-reading the same page.
+export const findWhatsappChatsNeedingBackfill = async ({
+  backfillHorizonAt,
+  first,
+}: {
+  backfillHorizonAt: string;
+  first: number;
+}): Promise<WhatsappChatRecord[]> => {
+  const result = await getCoreApiClient().query({
+    whatsappChats: {
+      __args: {
+        filter: {
+          or: [
+            { syncedFromAt: { is: 'NULL' } },
+            { syncedFromAt: { gt: backfillHorizonAt } },
+          ],
+        },
+        first,
+      },
+      edges: { node: CHAT_NODE_SELECTION },
+    },
+  });
+
+  return readEdges(result, 'whatsappChats').map(toChatRecord);
 };
 
 export const createWhatsappChat = async (

@@ -52,6 +52,7 @@ so new WhatsApp features do not require a schema change.
 | `whatsapp-webhook`      | `POST /whatsapp/webhook`, public | Ingests `message`, `message.any` and `message.ack` deliveries   |
 | `whatsapp-sync-chats`   | cron `*/15 * * * *`            | Refreshes accounts and chats (no message history)                |
 | `whatsapp-send-message` | `POST /whatsapp/send`, authenticated | Sends a text through WAHA and records the outbound message |
+| `whatsapp-backfill-messages` | cron `17 * * * *` + on demand | Imports history older than the install, window by window |
 
 The webhook's public URL is `https://<server>/s/whatsapp/webhook`.
 
@@ -74,6 +75,57 @@ is also checked before insert, so a repeat delivery (WAHA emits both `message`
 and `message.any` for inbound traffic) is a no-op. Ack status only ever moves
 forward through `UNKNOWN < PENDING < SERVER < DEVICE < READ < PLAYED`, because
 WhatsApp does not deliver ack events in order.
+
+## History backfill
+
+The webhook only ever sees messages sent after the app was installed. Everything
+older is imported by `whatsapp-backfill-messages`.
+
+WAHA's messages endpoint paginates with `limit`/`offset` only — bare arrays, no
+cursor, no total, `limit` capped at 100 — and offsets shift under a live chat,
+so paging a whole chat by offset skips and duplicates messages. History is
+therefore sliced into time windows through `filter.timestamp.gte`/`.lte` (unix
+**seconds**), which `computeWhatsappBackfillWindows` plans as one contiguous,
+non-overlapping week per window, newest first. Offset paging is only ever used
+*inside* one window, where it is safe: the window ends no later than the run
+anchor, so a message arriving mid-run falls outside the filter.
+
+`whatsappChat.syncedFromAt` is the watermark — the instant from which that
+chat's history is complete. It moves **backwards only, and only across windows
+imported in full**; a window cut short by the run budget, by the page guard or
+by a WAHA error stops the watermark in front of it, and older windows are
+abandoned with it rather than stranding the hole (see
+`advance-whatsapp-backfill-watermark.util.ts`).
+
+Each run is bounded so it finishes well inside `timeoutSeconds: 600` (the
+executor kills at 900s). The budget is checked between windows, never inside
+one: a started window always runs to its end, otherwise a chat busier than
+`maxMessagesPerRun` would never make progress. When the budget runs out the
+result carries `isComplete: false` and the next run resumes from the watermarks.
+
+Media is never downloaded here (`downloadMedia=false`); `hasMedia` and
+`mediaMimeType` come from the payload descriptor. History is lower fidelity than
+a live event — no `me` block, so no sender name on our own old messages, and
+whatever ack the server still holds — and missing fields are left null rather
+than guessed.
+
+Forcing a run, with the defaults in brackets:
+
+```bash
+node packages/twenty-sdk/dist/cli.cjs dev:function:exec \
+  packages/twenty-apps/internal/whatsapp -r prod \
+  -n whatsapp-backfill-messages \
+  -p '{"chatId":"<whatsappChat record id>","horizonDays":365,
+       "maxWindowsPerRun":10,"maxMessagesPerRun":200,"maxChatsPerRun":1}'
+```
+
+| Payload key         | Default | Meaning                                          |
+| ------------------- | ------- | ------------------------------------------------ |
+| `chatId`            | all chats needing backfill | A single `whatsappChat` **record id** (not the WAHA jid) |
+| `horizonDays`       | 90      | How far back to import                           |
+| `maxWindowsPerRun`  | 40      | Windows fetched before the run stops             |
+| `maxMessagesPerRun` | 800     | Messages fetched before the run stops            |
+| `maxChatsPerRun`    | 25      | Chats picked up per run                          |
 
 ## Server variables
 

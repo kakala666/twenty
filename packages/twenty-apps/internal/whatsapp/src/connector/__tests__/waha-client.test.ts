@@ -90,6 +90,32 @@ describe('WahaClient', () => {
     expect(url).not.toContain('offset');
   });
 
+  it('should slice chat history by timestamp filter and never ask WAHA to download media', async () => {
+    const fetchMock = stubFetch([]);
+
+    await buildClient().getChatMessages({
+      sessionName: 'default',
+      chatId: '8619880607709@c.us',
+      limit: 100,
+      offset: 200,
+      gteInSeconds: 1704067200,
+      lteInSeconds: 1704070799,
+    });
+
+    const { url } = getRequest(fetchMock);
+    const { pathname, searchParams } = new URL(url);
+
+    expect(pathname).toBe(
+      '/api/default/chats/8619880607709%40c.us/messages',
+    );
+    expect(searchParams.get('limit')).toBe('100');
+    expect(searchParams.get('offset')).toBe('200');
+    // Unix SECONDS, never milliseconds: WAHA's filter is second-granular.
+    expect(searchParams.get('filter.timestamp.gte')).toBe('1704067200');
+    expect(searchParams.get('filter.timestamp.lte')).toBe('1704070799');
+    expect(searchParams.get('downloadMedia')).toBe('false');
+  });
+
   it('should omit reply_to entirely when the message is not a reply', async () => {
     const fetchMock = stubFetch({ id: 'true_x@c.us_ABC' });
 

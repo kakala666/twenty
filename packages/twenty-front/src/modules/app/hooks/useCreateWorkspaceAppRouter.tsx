@@ -24,6 +24,7 @@ import { AuthFlowLayout } from '@/ui/layout/page/components/AuthFlowLayout';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
+import { WHATSAPP_CHAT_PATH } from '@/whatsapp/constants/WhatsappChatPath';
 import { Verify } from '~/pages/onboarding/Verify';
 import { lazyWithPreload } from '~/utils/lazyWithPreload';
 
@@ -123,6 +124,12 @@ const MobileHomePage = lazy(() =>
   })),
 );
 
+const WhatsappChatPage = lazy(() =>
+  import('~/pages/whatsapp/WhatsappChatPage').then((module) => ({
+    default: module.WhatsappChatPage,
+  })),
+);
+
 const NotFound = lazy(() =>
   import('~/pages/not-found/NotFound').then((module) => ({
     default: module.NotFound,
@@ -195,6 +202,14 @@ const createWorkspaceAppRouter = (
                 element={
                   <LazyRoute>
                     <MobileHomePage />
+                  </LazyRoute>
+                }
+              />
+              <Route
+                path={WHATSAPP_CHAT_PATH}
+                element={
+                  <LazyRoute>
+                    <WhatsappChatPage />
                   </LazyRoute>
                 }
               />

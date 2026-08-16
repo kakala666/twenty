@@ -1,4 +1,5 @@
 import {
+  type WahaChatMessagesParams,
   type WahaChatOverview,
   type WahaClientOptions,
   type WahaLidMapping,
@@ -77,6 +78,30 @@ export class WahaClient {
       method: 'GET',
       path: `/api/${encodeWahaPathSegment(sessionName)}/chats/overview`,
       query: { limit, offset },
+    });
+  }
+
+  // One time-bounded page of a chat's history. `downloadMedia` is pinned off:
+  // the backfill only needs the media descriptor that already rides along in
+  // `_data`, and fetching the bytes would blow its time budget.
+  async getChatMessages({
+    sessionName,
+    chatId,
+    limit,
+    offset,
+    gteInSeconds,
+    lteInSeconds,
+  }: WahaChatMessagesParams): Promise<WahaMessage[]> {
+    return await this.request<WahaMessage[]>({
+      method: 'GET',
+      path: `/api/${encodeWahaPathSegment(sessionName)}/chats/${encodeWahaPathSegment(chatId)}/messages`,
+      query: {
+        limit,
+        offset,
+        downloadMedia: false,
+        'filter.timestamp.gte': gteInSeconds,
+        'filter.timestamp.lte': lteInSeconds,
+      },
     });
   }
 

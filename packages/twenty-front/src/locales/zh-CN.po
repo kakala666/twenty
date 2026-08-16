@@ -21837,3 +21837,115 @@ msgstr "您的工作区将被禁用"
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Zed"
 msgstr "Zed"
+
+#. js-lingui-id: 2+ExvJ
+#: src/modules/whatsapp/components/NavigationDrawerWhatsappSection.tsx
+#: src/modules/whatsapp/components/WhatsappConversationListPanel.tsx
+msgid "WhatsApp"
+msgstr "微信 WhatsApp"
+
+#. js-lingui-id: Ww6Qgf
+#: src/modules/whatsapp/components/WhatsappAppNotInstalledEmptyState.tsx
+msgid "WhatsApp is not installed"
+msgstr "WhatsApp 应用尚未安装"
+
+#. js-lingui-id: +HzBEg
+#: src/modules/whatsapp/components/WhatsappAppNotInstalledEmptyState.tsx
+msgid "Install the WhatsApp app for this workspace to see your conversations here."
+msgstr "为该工作区安装 WhatsApp 应用后，即可在此查看会话。"
+
+#. js-lingui-id: r1vGgi
+#: src/modules/whatsapp/components/WhatsappNoChatSelectedEmptyState.tsx
+msgid "No conversation selected"
+msgstr "未选择会话"
+
+#. js-lingui-id: 2wG5Xz
+#: src/modules/whatsapp/components/WhatsappNoChatSelectedEmptyState.tsx
+msgid "Pick a conversation on the left to read and reply."
+msgstr "在左侧选择一个会话即可查看并回复。"
+
+#. js-lingui-id: F/oMKa
+#: src/modules/whatsapp/components/WhatsappConversationListEmptyState.tsx
+msgid "No conversation matches your search."
+msgstr "没有符合搜索条件的会话。"
+
+#. js-lingui-id: YnWe3z
+#: src/modules/whatsapp/components/WhatsappConversationListEmptyState.tsx
+msgid "No conversations yet."
+msgstr "暂无会话。"
+
+#. js-lingui-id: OWm+8o
+#: src/modules/whatsapp/components/WhatsappConversationListPanel.tsx
+msgid "Search conversations"
+msgstr "搜索会话"
+
+#. js-lingui-id: l6GfXr
+#: src/modules/whatsapp/components/WhatsappAccountStatusTag.tsx
+msgid "Starting"
+msgstr "启动中"
+
+#. js-lingui-id: XDwkfO
+#: src/modules/whatsapp/components/WhatsappAccountStatusTag.tsx
+msgid "Scan QR code"
+msgstr "请扫描二维码"
+
+#. js-lingui-id: ZYnwzF
+#: src/modules/whatsapp/components/WhatsappAccountStatusTag.tsx
+msgid "Disconnected"
+msgstr "已断开"
+
+#. js-lingui-id: NWmohA
+#: src/modules/whatsapp/components/WhatsappAckStatusIcon.tsx
+msgid "Not delivered"
+msgstr "未送达"
+
+#. js-lingui-id: 9bG48P
+#: src/modules/whatsapp/components/WhatsappAckStatusIcon.tsx
+#: src/modules/whatsapp/components/WhatsappPendingMessageBubble.tsx
+msgid "Sending"
+msgstr "发送中"
+
+#. js-lingui-id: cQlPDN
+#: src/modules/whatsapp/components/WhatsappAckStatusIcon.tsx
+msgid "Read"
+msgstr "已读"
+
+#. js-lingui-id: BTOhSm
+#: src/modules/whatsapp/components/WhatsappAckStatusIcon.tsx
+msgid "Delivered"
+msgstr "已送达"
+
+#. js-lingui-id: UY1vmE
+#: src/modules/whatsapp/components/WhatsappMessageBubble.tsx
+msgid "Attachment"
+msgstr "附件"
+
+#. js-lingui-id: YocCJW
+#: src/modules/whatsapp/components/WhatsappScrollToBottomButton.tsx
+msgid "Scroll to latest message"
+msgstr "滚动到最新消息"
+
+#. js-lingui-id: eWlz27
+#: src/modules/whatsapp/components/WhatsappComposer.tsx
+msgid "Write a message"
+msgstr "输入消息"
+
+#. js-lingui-id: alTOiF
+#: src/modules/whatsapp/components/WhatsappThreadHeader.tsx
+msgid "Group chat"
+msgstr "群聊"
+
+#. js-lingui-id: jfC/xh
+#: src/modules/whatsapp/components/WhatsappThreadHeader.tsx
+msgid "Contact"
+msgstr "联系人"
+
+#. js-lingui-id: czPqNd
+#: src/modules/whatsapp/components/WhatsappThreadPanelContent.tsx
+msgid "This conversation cannot be replied to."
+msgstr "该会话无法回复。"
+
+#. js-lingui-id: rUi78C
+#: src/modules/whatsapp/components/WhatsappThreadPanelContent.tsx
+msgid "Could not send the message."
+msgstr "消息发送失败。"

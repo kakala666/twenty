@@ -21887,3 +21887,115 @@ msgstr "Your workspace will be disabled"
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Zed"
 msgstr "Zed"
+
+#. js-lingui-id: 2+ExvJ
+#: src/modules/whatsapp/components/NavigationDrawerWhatsappSection.tsx
+#: src/modules/whatsapp/components/WhatsappConversationListPanel.tsx
+msgid "WhatsApp"
+msgstr "WhatsApp"
+
+#. js-lingui-id: Ww6Qgf
+#: src/modules/whatsapp/components/WhatsappAppNotInstalledEmptyState.tsx
+msgid "WhatsApp is not installed"
+msgstr "WhatsApp is not installed"
+
+#. js-lingui-id: +HzBEg
+#: src/modules/whatsapp/components/WhatsappAppNotInstalledEmptyState.tsx
+msgid "Install the WhatsApp app for this workspace to see your conversations here."
+msgstr "Install the WhatsApp app for this workspace to see your conversations here."
+
+#. js-lingui-id: r1vGgi
+#: src/modules/whatsapp/components/WhatsappNoChatSelectedEmptyState.tsx
+msgid "No conversation selected"
+msgstr "No conversation selected"
+
+#. js-lingui-id: 2wG5Xz
+#: src/modules/whatsapp/components/WhatsappNoChatSelectedEmptyState.tsx
+msgid "Pick a conversation on the left to read and reply."
+msgstr "Pick a conversation on the left to read and reply."
+
+#. js-lingui-id: F/oMKa
+#: src/modules/whatsapp/components/WhatsappConversationListEmptyState.tsx
+msgid "No conversation matches your search."
+msgstr "No conversation matches your search."
+
+#. js-lingui-id: YnWe3z
+#: src/modules/whatsapp/components/WhatsappConversationListEmptyState.tsx
+msgid "No conversations yet."
+msgstr "No conversations yet."
+
+#. js-lingui-id: OWm+8o
+#: src/modules/whatsapp/components/WhatsappConversationListPanel.tsx
+msgid "Search conversations"
+msgstr "Search conversations"
+
+#. js-lingui-id: l6GfXr
+#: src/modules/whatsapp/components/WhatsappAccountStatusTag.tsx
+msgid "Starting"
+msgstr "Starting"
+
+#. js-lingui-id: XDwkfO
+#: src/modules/whatsapp/components/WhatsappAccountStatusTag.tsx
+msgid "Scan QR code"
+msgstr "Scan QR code"
+
+#. js-lingui-id: ZYnwzF
+#: src/modules/whatsapp/components/WhatsappAccountStatusTag.tsx
+msgid "Disconnected"
+msgstr "Disconnected"
+
+#. js-lingui-id: NWmohA
+#: src/modules/whatsapp/components/WhatsappAckStatusIcon.tsx
+msgid "Not delivered"
+msgstr "Not delivered"
+
+#. js-lingui-id: 9bG48P
+#: src/modules/whatsapp/components/WhatsappAckStatusIcon.tsx
+#: src/modules/whatsapp/components/WhatsappPendingMessageBubble.tsx
+msgid "Sending"
+msgstr "Sending"
+
+#. js-lingui-id: cQlPDN
+#: src/modules/whatsapp/components/WhatsappAckStatusIcon.tsx
+msgid "Read"
+msgstr "Read"
+
+#. js-lingui-id: BTOhSm
+#: src/modules/whatsapp/components/WhatsappAckStatusIcon.tsx
+msgid "Delivered"
+msgstr "Delivered"
+
+#. js-lingui-id: UY1vmE
+#: src/modules/whatsapp/components/WhatsappMessageBubble.tsx
+msgid "Attachment"
+msgstr "Attachment"
+
+#. js-lingui-id: YocCJW
+#: src/modules/whatsapp/components/WhatsappScrollToBottomButton.tsx
+msgid "Scroll to latest message"
+msgstr "Scroll to latest message"
+
+#. js-lingui-id: eWlz27
+#: src/modules/whatsapp/components/WhatsappComposer.tsx
+msgid "Write a message"
+msgstr "Write a message"
+
+#. js-lingui-id: alTOiF
+#: src/modules/whatsapp/components/WhatsappThreadHeader.tsx
+msgid "Group chat"
+msgstr "Group chat"
+
+#. js-lingui-id: jfC/xh
+#: src/modules/whatsapp/components/WhatsappThreadHeader.tsx
+msgid "Contact"
+msgstr "Contact"
+
+#. js-lingui-id: czPqNd
+#: src/modules/whatsapp/components/WhatsappThreadPanelContent.tsx
+msgid "This conversation cannot be replied to."
+msgstr "This conversation cannot be replied to."
+
+#. js-lingui-id: rUi78C
+#: src/modules/whatsapp/components/WhatsappThreadPanelContent.tsx
+msgid "Could not send the message."
+msgstr "Could not send the message."

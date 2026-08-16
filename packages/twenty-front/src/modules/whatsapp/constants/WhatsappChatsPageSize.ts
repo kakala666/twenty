@@ -1,0 +1,1 @@
+export const WHATSAPP_CHATS_PAGE_SIZE = 60;
