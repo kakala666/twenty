@@ -111,7 +111,6 @@ const syncChatsForSession = async ({
 
     const chatInput = {
       chatId: identity.currentChatId,
-      name: isNonEmptyString(chat.name) ? chat.name : identity.currentChatId,
       phoneJid: identity.phoneJid,
       lid: identity.lid,
       // WAHA exposes no isGroup flag: the `@g.us` server is the only signal.
@@ -123,9 +122,16 @@ const syncChatsForSession = async ({
     const existingChat = await findWhatsappChatByAddresses(identity.knownIds);
 
     if (isDefined(existingChat)) {
+      // `name` is deliberately absent from the update: it is the one field a
+      // human is allowed to correct, and rewriting it every 15 minutes would
+      // silently undo that edit. WhatsApp-side renames therefore do not
+      // propagate to an existing chat, which is the trade we want.
       await updateWhatsappChat(existingChat.id, chatInput);
     } else {
-      await createWhatsappChat(chatInput);
+      await createWhatsappChat({
+        ...chatInput,
+        name: isNonEmptyString(chat.name) ? chat.name : identity.currentChatId,
+      });
     }
 
     syncedChatCount += 1;

@@ -14,6 +14,9 @@ export default defineField({
   name: 'chats',
   label: 'Chats',
   icon: 'IconMessages',
+  // Inverse of the sync-owned `account` relation: attaching a chat from this
+  // side would write the same `accountId` the sync owns.
+  isUIEditable: false,
   relationTargetObjectMetadataUniversalIdentifier: WHATSAPP_CHAT_OBJECT_ID,
   relationTargetFieldMetadataUniversalIdentifier:
     ACCOUNT_ON_WHATSAPP_CHAT_FIELD_ID,

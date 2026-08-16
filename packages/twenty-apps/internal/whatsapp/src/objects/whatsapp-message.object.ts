@@ -41,6 +41,8 @@ export enum WhatsappMessageAckStatus {
   PLAYED = 'PLAYED',
 }
 
+// A message is an immutable log line: nothing on it is editable by hand, so
+// every field carries `isUIEditable: false`.
 export default defineObject({
   universalIdentifier: WHATSAPP_MESSAGE_OBJECT_ID,
   nameSingular: 'whatsappMessage',
@@ -61,6 +63,7 @@ export default defineObject({
       description:
         'Full composite WAHA message id; the idempotency key for ingestion',
       icon: 'IconKey',
+      isUIEditable: false,
     },
     {
       universalIdentifier: WHATSAPP_MESSAGE_WA_MESSAGE_ID_FIELD_ID,
@@ -69,6 +72,7 @@ export default defineObject({
       label: 'WhatsApp message ID',
       description: 'Raw WhatsApp message id, without the composite prefix',
       icon: 'IconHash',
+      isUIEditable: false,
     },
     {
       universalIdentifier: WHATSAPP_MESSAGE_TEXT_FIELD_ID,
@@ -76,6 +80,7 @@ export default defineObject({
       name: 'text',
       label: 'Text',
       icon: 'IconMessage',
+      isUIEditable: false,
       isNullable: true,
     },
     {
@@ -84,6 +89,7 @@ export default defineObject({
       name: 'sentAt',
       label: 'Sent at',
       icon: 'IconClock',
+      isUIEditable: false,
     },
     {
       universalIdentifier: WHATSAPP_MESSAGE_DIRECTION_FIELD_ID,
@@ -91,6 +97,7 @@ export default defineObject({
       name: 'direction',
       label: 'Direction',
       icon: 'IconArrowsExchange',
+      isUIEditable: false,
       defaultValue: `'${WhatsappMessageDirection.INBOUND}'`,
       options: [
         {
@@ -116,6 +123,7 @@ export default defineObject({
       label: 'Ack status',
       description: 'Delivery acknowledgement reported by WhatsApp',
       icon: 'IconChecks',
+      isUIEditable: false,
       isNullable: true,
       options: [
         {
@@ -176,6 +184,7 @@ export default defineObject({
       label: 'Sender ID',
       description: 'Sender jid or lid',
       icon: 'IconUser',
+      isUIEditable: false,
       isNullable: true,
     },
     {
@@ -184,6 +193,7 @@ export default defineObject({
       name: 'senderName',
       label: 'Sender name',
       icon: 'IconUserCircle',
+      isUIEditable: false,
       isNullable: true,
     },
     {
@@ -193,6 +203,7 @@ export default defineObject({
       label: 'Reply to',
       description: 'External id of the message this one quotes',
       icon: 'IconArrowBackUp',
+      isUIEditable: false,
       isNullable: true,
     },
     {
@@ -201,6 +212,7 @@ export default defineObject({
       name: 'hasMedia',
       label: 'Has media',
       icon: 'IconPaperclip',
+      isUIEditable: false,
       defaultValue: false,
     },
     {
@@ -209,6 +221,7 @@ export default defineObject({
       name: 'mediaMimeType',
       label: 'Media MIME type',
       icon: 'IconFileTypography',
+      isUIEditable: false,
       isNullable: true,
     },
     {
@@ -219,6 +232,7 @@ export default defineObject({
       description:
         'Channel-specific extras kept verbatim so new WhatsApp features need no schema change',
       icon: 'IconCode',
+      isUIEditable: false,
       isNullable: true,
     },
   ],

@@ -14,6 +14,9 @@ export default defineField({
   name: 'messages',
   label: 'Messages',
   icon: 'IconMessage',
+  // Inverse of the sync-owned `whatsappChat` relation: moving a message between
+  // chats by hand would corrupt the log.
+  isUIEditable: false,
   relationTargetObjectMetadataUniversalIdentifier: WHATSAPP_MESSAGE_OBJECT_ID,
   relationTargetFieldMetadataUniversalIdentifier:
     WHATSAPP_CHAT_ON_WHATSAPP_MESSAGE_FIELD_ID,

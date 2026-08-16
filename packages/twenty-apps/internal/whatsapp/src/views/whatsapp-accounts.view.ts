@@ -19,7 +19,9 @@ import {
 
 export default defineView({
   universalIdentifier: WHATSAPP_ACCOUNTS_VIEW_ID,
-  name: 'All WhatsApp Accounts',
+  // Platform convention for app views: the placeholder is substituted with
+  // the already-translated object label, so the name localises with the object.
+  name: 'All {objectLabelPlural}',
   objectUniversalIdentifier: WHATSAPP_ACCOUNT_OBJECT_ID,
   type: ViewType.TABLE,
   icon: 'IconBrandWhatsapp',

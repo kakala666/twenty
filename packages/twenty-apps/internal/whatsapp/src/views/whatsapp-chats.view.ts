@@ -23,7 +23,9 @@ import {
 
 export default defineView({
   universalIdentifier: WHATSAPP_CHATS_VIEW_ID,
-  name: 'All WhatsApp Chats',
+  // Platform convention for app views: the placeholder is substituted with
+  // the already-translated object label, so the name localises with the object.
+  name: 'All {objectLabelPlural}',
   objectUniversalIdentifier: WHATSAPP_CHAT_OBJECT_ID,
   type: ViewType.TABLE,
   icon: 'IconMessages',

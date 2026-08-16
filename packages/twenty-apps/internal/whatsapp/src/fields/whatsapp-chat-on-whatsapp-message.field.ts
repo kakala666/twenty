@@ -21,6 +21,8 @@ export default defineField({
   name: 'whatsappChat',
   label: 'Chat',
   icon: 'IconMessages',
+  // Sync-owned: which conversation a message belongs to is decided at ingestion.
+  isUIEditable: false,
   relationTargetObjectMetadataUniversalIdentifier: WHATSAPP_CHAT_OBJECT_ID,
   relationTargetFieldMetadataUniversalIdentifier:
     MESSAGES_ON_WHATSAPP_CHAT_FIELD_ID,

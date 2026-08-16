@@ -14,7 +14,13 @@ Front components are out of scope here.
 | ----------------- | ---------------- | ---------------------------------------------------- |
 | `whatsappAccount` | `displayName`    | One connected WhatsApp number, i.e. one WAHA session |
 | `whatsappChat`    | `name`           | One conversation (1:1 or group)                      |
-| `whatsappMessage` | `externalId`     | One message                                          |
+| `whatsappMessage` | `text`           | One message                                          |
+
+Every field the sync writes carries `isUIEditable: false`, so the CRM UI shows
+it read-only: a hand edit could only drift until the next sync overwrote it.
+The exceptions are `whatsappChat.name` (correcting a counterpart's display name
+is legitimate) and `whatsappChat.person` / `whatsappChat.company` plus their
+inverses (linking a conversation to a CRM record is the point of the feature).
 
 Relations:
 
@@ -92,6 +98,24 @@ npx vitest run
 
 Pure logic lives in `src/utils/` and is covered there; the logic functions
 themselves stay thin (parse input, call a handler, return a `Response`).
+
+## Translations
+
+`locales/en.json` is the source catalog, `locales/<locale>.json` holds the
+translations. Keys are the raw English source strings; `dev:build` hashes each
+key into a short message id (sha256 of the source string followed by U+001F
+and an optional context, base64, first 6 chars) and emits
+`manifest.translations[locale][messageId]`. The server stores that per
+application and swaps object labels, field labels and field descriptions at
+query time from the viewer's locale.
+
+**Do not re-run `dev:translations-extract` without re-checking the locale
+files.** The extractor only walks `manifest.fields`, `manifest.objects`,
+`manifest.views`, `manifest.navigationMenuItems`, `manifest.pageLayoutTabs` and
+`manifest.commandMenuItems` — it does **not** see fields declared inline inside
+`defineObject({ fields: [...] })`, nor select-option labels. Those keys are
+maintained by hand in `locales/zh-CN.json`, and the extractor rewrites every
+locale file to contain only the keys it found, silently dropping them.
 
 ## Build and install
 

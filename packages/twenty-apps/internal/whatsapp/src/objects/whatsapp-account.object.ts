@@ -24,6 +24,9 @@ export enum WhatsappAccountStatus {
   STOPPED = 'STOPPED',
 }
 
+// Every field below is derived state written by `syncWhatsappAccount`, hence
+// `isUIEditable: false` throughout: a hand edit would only drift until the next
+// cron run silently overwrites it.
 export default defineObject({
   universalIdentifier: WHATSAPP_ACCOUNT_OBJECT_ID,
   nameSingular: 'whatsappAccount',
@@ -42,6 +45,7 @@ export default defineObject({
       label: 'Session name',
       description: 'WAHA session name, e.g. default',
       icon: 'IconPlugConnected',
+      isUIEditable: false,
     },
     {
       universalIdentifier: WHATSAPP_ACCOUNT_DISPLAY_NAME_FIELD_ID,
@@ -50,6 +54,7 @@ export default defineObject({
       label: 'Display name',
       description: 'Human readable name of the connected number',
       icon: 'IconAbc',
+      isUIEditable: false,
     },
     {
       universalIdentifier: WHATSAPP_ACCOUNT_PHONE_NUMBER_FIELD_ID,
@@ -57,6 +62,7 @@ export default defineObject({
       name: 'phoneNumber',
       label: 'Phone number',
       icon: 'IconPhone',
+      isUIEditable: false,
       isNullable: true,
     },
     {
@@ -66,6 +72,7 @@ export default defineObject({
       label: 'LID',
       description: 'WhatsApp privacy id of the connected number',
       icon: 'IconFingerprint',
+      isUIEditable: false,
       isNullable: true,
     },
     {
@@ -75,6 +82,7 @@ export default defineObject({
       label: 'Status',
       description: 'State reported by the WAHA session',
       icon: 'IconProgress',
+      isUIEditable: false,
       isNullable: true,
       options: [
         {
@@ -120,6 +128,7 @@ export default defineObject({
       name: 'lastSyncedAt',
       label: 'Last synced at',
       icon: 'IconRefresh',
+      isUIEditable: false,
       isNullable: true,
     },
   ],

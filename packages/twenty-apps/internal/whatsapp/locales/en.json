@@ -1,0 +1,21 @@
+{
+  "A WhatsApp conversation, one-to-one or group": "A WhatsApp conversation, one-to-one or group",
+  "A connected WhatsApp number, backed by one WAHA session": "A connected WhatsApp number, backed by one WAHA session",
+  "A single WhatsApp message imported from WAHA": "A single WhatsApp message imported from WAHA",
+  "Account": "Account",
+  "All {objectLabelPlural}": "All {objectLabelPlural}",
+  "CRM company this conversation was matched to": "CRM company this conversation was matched to",
+  "CRM contact this conversation was matched to": "CRM contact this conversation was matched to",
+  "Chat": "Chat",
+  "Chats": "Chats",
+  "Company": "Company",
+  "Messages": "Messages",
+  "Person": "Person",
+  "WhatsApp Account": "WhatsApp Account",
+  "WhatsApp Accounts": "WhatsApp Accounts",
+  "WhatsApp Chat": "WhatsApp Chat",
+  "WhatsApp Chats": "WhatsApp Chats",
+  "WhatsApp Message": "WhatsApp Message",
+  "WhatsApp Messages": "WhatsApp Messages",
+  "WhatsApp number this conversation belongs to": "WhatsApp number this conversation belongs to"
+}

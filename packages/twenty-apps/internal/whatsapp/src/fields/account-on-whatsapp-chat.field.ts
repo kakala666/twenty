@@ -20,6 +20,9 @@ export default defineField({
   label: 'Account',
   description: 'WhatsApp number this conversation belongs to',
   icon: 'IconBrandWhatsapp',
+  // Sync-owned: the session a chat came through is a fact of the ingestion, not
+  // a choice. Both the cron sync and the webhook set `accountId`.
+  isUIEditable: false,
   relationTargetObjectMetadataUniversalIdentifier: WHATSAPP_ACCOUNT_OBJECT_ID,
   relationTargetFieldMetadataUniversalIdentifier:
     CHATS_ON_WHATSAPP_ACCOUNT_FIELD_ID,

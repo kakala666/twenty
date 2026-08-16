@@ -11,6 +11,9 @@ import {
   WHATSAPP_CHAT_SYNCED_FROM_AT_FIELD_ID,
 } from '../constants/universal-identifiers';
 
+// Addressing and timeline fields are derived from WAHA and carry
+// `isUIEditable: false`. `name` stays editable on purpose: correcting a
+// counterpart's display name is a legitimate human action.
 export default defineObject({
   universalIdentifier: WHATSAPP_CHAT_OBJECT_ID,
   nameSingular: 'whatsappChat',
@@ -28,6 +31,7 @@ export default defineObject({
       label: 'Chat ID',
       description: 'WAHA chat id, e.g. 8619880607709@c.us or 1203...@g.us',
       icon: 'IconHash',
+      isUIEditable: false,
     },
     {
       universalIdentifier: WHATSAPP_CHAT_NAME_FIELD_ID,
@@ -44,6 +48,7 @@ export default defineObject({
       label: 'Phone JID',
       description: 'Phone-number based jid, e.g. 8619880607709@c.us',
       icon: 'IconPhone',
+      isUIEditable: false,
       isNullable: true,
     },
     {
@@ -53,6 +58,7 @@ export default defineObject({
       label: 'LID',
       description: 'WhatsApp privacy id of the counterpart',
       icon: 'IconFingerprint',
+      isUIEditable: false,
       isNullable: true,
     },
     {
@@ -61,6 +67,7 @@ export default defineObject({
       name: 'isGroup',
       label: 'Is group',
       icon: 'IconUsersGroup',
+      isUIEditable: false,
       defaultValue: false,
     },
     {
@@ -69,6 +76,7 @@ export default defineObject({
       name: 'lastMessageAt',
       label: 'Last message at',
       icon: 'IconClock',
+      isUIEditable: false,
       isNullable: true,
     },
     {
@@ -79,6 +87,7 @@ export default defineObject({
       description:
         'Backfill watermark: timestamp of the oldest message already imported',
       icon: 'IconHistory',
+      isUIEditable: false,
       isNullable: true,
     },
   ],
