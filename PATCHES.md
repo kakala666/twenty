@@ -15,11 +15,18 @@ Find every fork commit with `git log --oneline --grep='\[fork\]'`.
 
 ## Upstream files modified
 
-**None.** The whole feature ships as an app, so there is currently nothing to merge.
+Four, and every one of them is either a single-line insertion or a genuine bug fix.
 
-That is the point of the app route: objects, views, navigation and the sync logic functions all
-travel in the app manifest and are pushed over the API at runtime, so no container image is rebuilt
-and no upstream file is touched.
+| File | Change |
+|---|---|
+| `packages/twenty-front/src/modules/app/hooks/useCreateWorkspaceAppRouter.tsx` | one lazy import + one `<Route>` for the chat page |
+| `packages/twenty-front/src/modules/navigation/components/MainNavigationDrawerScrollableItems.tsx` | one import + one JSX line for the nav entry |
+| `packages/twenty-sdk/project.json` | `rimraf -g` and double-quoted globs (see bug 1 below) |
+| `packages/twenty-sdk/src/cli/utilities/build/manifest/manifest-build.ts` | POSIX-normalize manifest paths (see bug 2 below) |
+
+The WhatsApp data model and all sync logic touch none of these -- they travel in the app manifest and
+are pushed over the API at runtime. Only the native chat page needed the frontend two, and the SDK
+two are cross-platform fixes that happen to be prerequisites for building anything on Windows.
 
 ## Why there are two copies of the sync logic
 
@@ -63,31 +70,28 @@ These live in `/opt/twenty/deploy/.env` on the server, not in this repo, but the
 - **No fork of WAHA.** It runs as a pinned upstream image and is treated as infrastructure, like
   Postgres or Redis.
 
-## Known upstream breakage worked around
+## Upstream bugs fixed at the source
 
-Both of these are Windows-only bugs in upstream tooling. Neither exists on Linux, so neither is
-patched in tracked source.
+Two Windows-only defects in `twenty-sdk` blocked this work. Both are now fixed in tracked source,
+not worked around, because a patched build artifact is invisible to git and dies on the next rebuild.
 
-1. **`twenty-sdk`'s `build:sdk` script passes single-quoted globs to `rimraf`**
-   (`npx rimraf 'dist/sdk' 'dist/define/**/*.d.ts' …`). On Windows the shell does not strip the
-   quotes, so rimraf receives a path containing `'` and fails with `EINVAL: Illegal characters in
-   path`. Consequence: **the frontend cannot be built on Windows, and `nx typecheck twenty-server`
-   cannot run** (it depends on this build). Build container images on Linux; typecheck with
-   `npx tsc --noEmit -p tsconfig.json` inside `packages/twenty-server`.
+1. **`twenty-sdk` would not build on Windows at all.**
+   `packages/twenty-sdk/project.json` cleared generated declarations with
+   `npx rimraf 'dist/define/**/*.d.ts' ...`. rimraf's CLI treats its arguments as **literal paths by
+   default**; globbing requires `-g`. On Linux the unexpanded `*` is a legal filename character, so
+   rimraf deleted nothing and nobody noticed. On Windows `*` is illegal, so the build died with
+   `EINVAL: Illegal characters in path` -- which also took down `nx typecheck twenty-server` and the
+   frontend build, since both depend on it. Fixed by adding `-g`, and by switching the single quotes
+   to escaped double quotes because cmd.exe does not strip single quotes.
 
-2. **The app CLI writes Windows path separators into the app manifest.**
-   `manifest-build.ts` sets `sourceHandlerPath` / `builtHandlerPath` from `path.relative()`, so on
-   Windows a logic function is recorded as `src\logic-functions\x.function.mjs` while the published
-   tarball stores it as `src/logic-functions/x.function.mjs`. Install then fails with
-   `File not found in package: src\logic-functions\…`. Any app with a logic function is unpublishable
-   from Windows.
+2. **An app containing a logic function published but could not install, from Windows.**
+   `manifest-build.ts` derived every manifest path from `relative(appPath, filePath)`, which yields
+   backslashes on Windows, while the published tarball stores POSIX-separated entries. Install failed
+   with `File not found in package: src\logic-functions\x.function.mjs`. Fixed at the source by
+   normalizing once -- `.split(sep).join('/')` -- so every path field is correct.
 
-   Worked around by patching the **built** CLI, which is gitignored, so no tracked file changed:
-   `packages/twenty-sdk/dist/login-DhZHBTSY.js` (the CJS chunk `dist/cli.cjs` loads) — both handler
-   paths get `.replace(/\\/g, "/")`. The ESM twin `dist/login-BZKt-N5E.mjs` is patched identically.
-
-   **This patch is lost whenever `twenty-sdk` is rebuilt.** If `app:install` starts failing with a
-   backslashed path again, reapply it — or publish from Linux, where the bug does not occur.
+These are the fork's only edits to upstream `twenty-sdk`, and both are genuine cross-platform bug
+fixes rather than fork-specific behaviour.
 
 ## Regenerable, never hand-merge
 
